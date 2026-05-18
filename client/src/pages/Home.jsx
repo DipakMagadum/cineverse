@@ -4,7 +4,7 @@ import MovieGrid from '../components/MovieGrid'
 
 function Home() {
   return (
-    <div className="bg-gray-950 min-h-screen text-white">
+    <div style={{ background: '#000', minHeight: '100vh' }} className="text-white">
       <Navbar />
       <Hero />
       <MovieGrid />
