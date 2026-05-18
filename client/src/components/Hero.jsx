@@ -18,15 +18,6 @@ function Hero() {
         background: 'radial-gradient(ellipse at 20% 50%, rgba(255,60,60,0.15) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(255,140,0,0.1) 0%, transparent 50%), radial-gradient(ellipse at 50% 100%, rgba(120,0,255,0.08) 0%, transparent 50%)',
       }}/>
 
-      {/* Film grain overlay */}
-      <div style={{
-        position: 'absolute', inset: 0,
-        backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\' opacity=\'0.03\'/%3E%3C/svg%3E")',
-        opacity: 0.4,
-        pointerEvents: 'none',
-      }}/>
-
-      {/* Diagonal decorative lines */}
       <div style={{
         position: 'absolute', inset: 0,
         backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 100px, rgba(255,60,60,0.02) 100px, rgba(255,60,60,0.02) 101px)',
@@ -34,7 +25,7 @@ function Hero() {
       }}/>
 
       {/* Content */}
-      <div style={{ position: 'relative', zIndex: 2, padding: '0 80px', maxWidth: '700px' }}>
+      <div style={{ position: 'relative', zIndex: 2, padding: 'clamp(20px, 5vw, 80px)', maxWidth: '700px', width: '100%' }}>
         
         {/* Badge */}
         <div style={{
@@ -58,7 +49,7 @@ function Hero() {
 
         {/* Title */}
         <h1 style={{
-          fontSize: 'clamp(3rem, 6vw, 5rem)',
+          fontSize: 'clamp(2.5rem, 8vw, 5rem)',
           fontWeight: '900',
           lineHeight: '1.05',
           letterSpacing: '-2px',
@@ -80,7 +71,7 @@ function Hero() {
 
         <p style={{
           color: '#888',
-          fontSize: '1.1rem',
+          fontSize: 'clamp(0.9rem, 2vw, 1.1rem)',
           lineHeight: '1.7',
           marginBottom: '40px',
           fontWeight: '400',
@@ -96,17 +87,17 @@ function Hero() {
             background: 'linear-gradient(135deg, #ff3c3c, #ff8c00)',
             color: 'white',
             border: 'none',
-            padding: '14px 32px',
+            padding: 'clamp(10px, 2vw, 14px) clamp(20px, 4vw, 32px)',
             borderRadius: '50px',
-            fontSize: '14px',
+            fontSize: 'clamp(12px, 2vw, 14px)',
             fontWeight: '700',
             letterSpacing: '1px',
             cursor: 'pointer',
             boxShadow: '0 8px 32px rgba(255,60,60,0.35)',
             transition: 'transform 0.2s, box-shadow 0.2s',
           }}
-          onMouseOver={e => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 12px 40px rgba(255,60,60,0.5)' }}
-          onMouseOut={e => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = '0 8px 32px rgba(255,60,60,0.35)' }}>
+          onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(255,60,60,0.5)' }}
+          onMouseOut={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 32px rgba(255,60,60,0.35)' }}>
             🎬 BROWSE MOVIES
           </button>
 
@@ -114,23 +105,23 @@ function Hero() {
             background: 'transparent',
             color: 'white',
             border: '1px solid rgba(255,255,255,0.2)',
-            padding: '14px 32px',
+            padding: 'clamp(10px, 2vw, 14px) clamp(20px, 4vw, 32px)',
             borderRadius: '50px',
-            fontSize: '14px',
+            fontSize: 'clamp(12px, 2vw, 14px)',
             fontWeight: '700',
             letterSpacing: '1px',
             cursor: 'pointer',
             backdropFilter: 'blur(10px)',
             transition: 'border-color 0.2s, background 0.2s',
           }}
-          onMouseOver={e => { e.target.style.borderColor = 'rgba(255,60,60,0.5)'; e.target.style.background = 'rgba(255,60,60,0.08)' }}
-          onMouseOut={e => { e.target.style.borderColor = 'rgba(255,255,255,0.2)'; e.target.style.background = 'transparent' }}>
+          onMouseOver={e => { e.currentTarget.style.borderColor = 'rgba(255,60,60,0.5)'; e.currentTarget.style.background = 'rgba(255,60,60,0.08)' }}
+          onMouseOut={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; e.currentTarget.style.background = 'transparent' }}>
             📥 LATEST DOWNLOADS
           </button>
         </div>
 
         {/* Stats */}
-        <div style={{ display: 'flex', gap: '40px', marginTop: '56px' }}>
+        <div style={{ display: 'flex', gap: 'clamp(20px, 4vw, 40px)', marginTop: '56px', flexWrap: 'wrap' }}>
           {[
             { num: '1000+', label: 'Movies' },
             { num: 'HD', label: 'Quality' },
@@ -138,7 +129,7 @@ function Hero() {
           ].map(stat => (
             <div key={stat.label}>
               <div style={{
-                fontSize: '1.6rem', fontWeight: '900',
+                fontSize: 'clamp(1.2rem, 3vw, 1.6rem)', fontWeight: '900',
                 background: 'linear-gradient(135deg, #fff, #ff8c00)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
@@ -151,16 +142,6 @@ function Hero() {
           ))}
         </div>
       </div>
-
-      {/* Right side decorative element */}
-      <div style={{
-        position: 'absolute', right: '-100px', top: '50%',
-        transform: 'translateY(-50%)',
-        width: '600px', height: '600px',
-        borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(255,60,60,0.08) 0%, transparent 70%)',
-        pointerEvents: 'none',
-      }}/>
 
       <style>{`
         @keyframes pulse {
