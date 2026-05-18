@@ -9,9 +9,13 @@ connectDB();
 const app = express();
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: [
+    'http://localhost:5173',
+    'https://cineverse-six-beta.vercel.app'
+  ],
   credentials: true
 }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -20,7 +24,7 @@ app.use('/api/movies', require('./routes/movieRoutes'));
 app.use('/api/upload', require('./routes/uploadRoutes'));
 app.use('/api/users',  require('./routes/userRoutes'));
 
-app.get('/', (req, res) => res.send('🎬 TadiPaar API Running ✅'));
+app.get('/', (req, res) => res.send('🎬 CineVerse API Running ✅'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
