@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import API from '../api'
 
 function Login() {
   const [email, setEmail] = useState('')
@@ -11,7 +11,7 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault()
     try {
-      const { data } = await axios.post('http://localhost:5000/api/auth/login', { email, password })
+      const { data } = await API.post('/api/auth/login', { email, password })
       localStorage.setItem('user', JSON.stringify(data))
       navigate('/')
     } catch (err) {
@@ -22,8 +22,7 @@ function Login() {
   return (
     <div className="bg-gray-950 min-h-screen flex items-center justify-center">
       <div className="bg-gray-900 p-8 rounded-2xl w-full max-w-md">
-        {/* Logo */}
-        <h1 className="text-3xl font-bold text-red-500 text-center mb-2">TadiPaar 🎬</h1>
+        <h1 className="text-3xl font-bold text-red-500 text-center mb-2">CineVerse 🎬</h1>
         <p className="text-gray-400 text-center text-sm mb-8">Sign in to download movies</p>
 
         {error && <p className="bg-red-600 text-white text-sm px-4 py-2 rounded-lg mb-4">{error}</p>}

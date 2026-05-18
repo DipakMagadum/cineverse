@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import API from '../api'
 import Navbar from '../components/Navbar'
 
 const genres = ['All', 'Action', 'Drama', 'Comedy', 'Thriller', 'Romance', 'Horror', 'Sci-Fi']
@@ -22,7 +22,7 @@ function Movies() {
         if (genre !== 'All') params.genre = genre
         if (language !== 'All') params.language = language
         if (search) params.search = search
-        const { data } = await axios.get('http://localhost:5000/api/movies', { params })
+        const { data } = await API.get('/api/movies', { params })
         setMovies(data)
       } catch (err) {
         console.error(err)
@@ -40,7 +40,6 @@ function Movies() {
       <div className="px-8 py-6">
         <h1 className="text-3xl font-bold mb-6">🎬 All Movies</h1>
 
-        {/* Search */}
         <div className="flex items-center bg-gray-800 rounded-full px-4 py-3 w-full max-w-md mb-6">
           <input
             type="text"
@@ -52,7 +51,6 @@ function Movies() {
           <span>🔍</span>
         </div>
 
-        {/* Genre Filter */}
         <div className="mb-4">
           <p className="text-gray-400 text-sm mb-2">Genre:</p>
           <div className="flex flex-wrap gap-2">
@@ -68,7 +66,6 @@ function Movies() {
           </div>
         </div>
 
-        {/* Language Filter */}
         <div className="mb-8">
           <p className="text-gray-400 text-sm mb-2">Language:</p>
           <div className="flex flex-wrap gap-2">
@@ -84,7 +81,6 @@ function Movies() {
           </div>
         </div>
 
-        {/* Movies Grid */}
         {loading ? (
           <p className="text-gray-400">Loading...</p>
         ) : movies.length === 0 ? (

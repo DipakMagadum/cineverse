@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import axios from 'axios'
-
-const API = 'http://localhost:5000'
+import API from '../api'
 
 function MovieDetail() {
   const { id } = useParams()
@@ -20,7 +18,7 @@ function MovieDetail() {
 
   const fetchMovie = async () => {
     try {
-      const { data } = await axios.get(`${API}/api/movies/${id}`)
+      const { data } = await API.get(`/api/movies/${id}`)
       setMovie(data)
     } catch (err) {
       console.error(err)
@@ -31,7 +29,7 @@ function MovieDetail() {
 
   const checkWatchlist = async () => {
     try {
-      const { data } = await axios.get(`${API}/api/users/watchlist`, {
+      const { data } = await API.get('/api/users/watchlist', {
         headers: { Authorization: `Bearer ${user.token}` }
       })
       setInWatchlist(data.some(m => m._id === id))
@@ -43,7 +41,7 @@ function MovieDetail() {
   const toggleWatchlist = async () => {
     if (!user) { navigate('/login'); return }
     try {
-      await axios.post(`${API}/api/users/watchlist/${id}`, {}, {
+      await API.post(`/api/users/watchlist/${id}`, {}, {
         headers: { Authorization: `Bearer ${user.token}` }
       })
       setInWatchlist(!inWatchlist)
@@ -54,15 +52,13 @@ function MovieDetail() {
     }
   }
 
-  // ── SIMPLE & WORKING DOWNLOAD ──
   const handleDownload = async (quality) => {
     if (!user) { navigate('/login'); return }
     try {
-      const { data } = await axios.get(
-        `${API}/api/movies/${id}/download/${quality}`,
+      const { data } = await API.get(
+        `/api/movies/${id}/download/${quality}`,
         { headers: { Authorization: `Bearer ${user.token}` } }
       )
-      // Direct link open kar — Google Drive link असल्यास direct download होईल
       window.open(data.url, '_blank')
     } catch (err) {
       alert('❌ Download link available nahi!')
@@ -83,7 +79,6 @@ function MovieDetail() {
 
   return (
     <div className="bg-gray-950 min-h-screen text-white">
-      {/* Top bar */}
       <div className="px-8 pt-6 flex items-center justify-between">
         <button onClick={() => navigate(-1)}
           className="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg text-sm">
@@ -97,7 +92,6 @@ function MovieDetail() {
       </div>
 
       <div className="max-w-5xl mx-auto px-8 py-6 flex flex-col md:flex-row gap-8">
-        {/* Poster */}
         <div className="w-full md:w-72 flex-shrink-0">
           {movie.posterUrl ? (
             <img src={movie.posterUrl} alt={movie.title}
@@ -107,8 +101,7 @@ function MovieDetail() {
               <span className="text-6xl">🎬</span>
             </div>
           )}
-          <button
-            onClick={toggleWatchlist}
+          <button onClick={toggleWatchlist}
             className={`w-full mt-3 py-3 rounded-xl font-semibold text-sm transition-colors ${
               inWatchlist
                 ? 'bg-yellow-600 hover:bg-yellow-700 text-white'
@@ -118,7 +111,6 @@ function MovieDetail() {
           </button>
         </div>
 
-        {/* Info */}
         <div className="flex-1">
           <h1 className="text-4xl font-bold mb-2">{movie.title}</h1>
 
@@ -173,7 +165,6 @@ function MovieDetail() {
             </a>
           )}
 
-          {/* Download Section */}
           <div className="bg-gray-900 rounded-xl p-5">
             <h3 className="text-lg font-bold mb-1">📥 Download Movie</h3>
             <p className="text-gray-400 text-xs mb-4">

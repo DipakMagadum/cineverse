@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import API from '../api'
 import Navbar from '../components/Navbar'
-
-const API = 'http://localhost:5000'
 
 function Watchlist() {
   const [movies, setMovies] = useState([])
@@ -21,7 +19,7 @@ function Watchlist() {
 
   const fetchWatchlist = async () => {
     try {
-      const { data } = await axios.get(`${API}/api/users/watchlist`, {
+      const { data } = await API.get('/api/users/watchlist', {
         headers: { Authorization: `Bearer ${user.token}` }
       })
       setMovies(data)
@@ -32,9 +30,9 @@ function Watchlist() {
     }
   }
 
-  const removeFromWatchlist = async (movieId, title) => {
+  const removeFromWatchlist = async (movieId) => {
     try {
-      await axios.post(`${API}/api/users/watchlist/${movieId}`, {}, {
+      await API.post(`/api/users/watchlist/${movieId}`, {}, {
         headers: { Authorization: `Bearer ${user.token}` }
       })
       setMovies(movies.filter(m => m._id !== movieId))
@@ -64,7 +62,6 @@ function Watchlist() {
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {movies.map((movie) => (
               <div key={movie._id} className="bg-gray-900 rounded-lg overflow-hidden group relative">
-                {/* Poster */}
                 <div
                   onClick={() => navigate(`/movie/${movie._id}`)}
                   className="bg-gray-800 h-48 flex items-center justify-center cursor-pointer relative overflow-hidden">
@@ -75,8 +72,6 @@ function Watchlist() {
                   }
                   <span className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded">HD</span>
                 </div>
-
-                {/* Info */}
                 <div className="p-3">
                   <h3 className="text-white text-sm font-semibold truncate">{movie.title}</h3>
                   <p className="text-gray-400 text-xs mt-1">
@@ -89,7 +84,7 @@ function Watchlist() {
                       📥 Download
                     </button>
                     <button
-                      onClick={() => removeFromWatchlist(movie._id, movie.title)}
+                      onClick={() => removeFromWatchlist(movie._id)}
                       className="bg-gray-700 hover:bg-gray-600 text-white text-xs px-2 py-1.5 rounded"
                       title="Remove from watchlist">
                       🗑️

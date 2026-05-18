@@ -1,16 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
-
-const API = 'http://localhost:5000'
+import API from '../api'
 
 function AdminPanel() {
   const navigate = useNavigate()
   const user = JSON.parse(localStorage.getItem('user'))
 
-  const [tab, setTab] = useState('add') // 'add' | 'manage'
+  const [tab, setTab] = useState('add')
   const [movies, setMovies] = useState([])
-  const [editMovie, setEditMovie] = useState(null) // editing movie
+  const [editMovie, setEditMovie] = useState(null)
   const [success, setSuccess] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -35,14 +33,13 @@ function AdminPanel() {
     return null
   }
 
-  // Manage tab var movies fetch kar
   useEffect(() => {
     if (tab === 'manage') fetchMovies()
   }, [tab])
 
   const fetchMovies = async () => {
     try {
-      const { data } = await axios.get(`${API}/api/movies`)
+      const { data } = await API.get('/api/movies')
       setMovies(data)
     } catch (err) {
       console.error(err)
@@ -60,13 +57,12 @@ function AdminPanel() {
     setDownloadLinks(updated)
   }
 
-  // ── ADD MOVIE ──
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
     try {
       const filledLinks = downloadLinks.filter(l => l.url.trim() !== '')
-      await axios.post(`${API}/api/upload/movie`, {
+      await API.post('/api/upload/movie', {
         ...form,
         downloadLinks: filledLinks
       }, {
@@ -83,7 +79,6 @@ function AdminPanel() {
     }
   }
 
-  // ── EDIT — form madhe data load kar ──
   const handleEdit = (movie) => {
     setEditMovie(movie)
     setForm({
@@ -100,23 +95,21 @@ function AdminPanel() {
       duration:    movie.duration || '',
       cast:        movie.cast?.join(', ') || ''
     })
-    // Download links load kar
     const links = ['480p', '720p', '1080p'].map(q => {
       const existing = movie.downloadLinks?.find(l => l.quality === q)
       return existing || { quality: q, size: '', url: '' }
     })
     setDownloadLinks(links)
-    setTab('add') // form tab var ja
+    setTab('add')
     window.scrollTo(0, 0)
   }
 
-  // ── UPDATE MOVIE ──
   const handleUpdate = async (e) => {
     e.preventDefault()
     setLoading(true)
     try {
       const filledLinks = downloadLinks.filter(l => l.url.trim() !== '')
-      await axios.put(`${API}/api/upload/movie/${editMovie._id}`, {
+      await API.put(`/api/upload/movie/${editMovie._id}`, {
         ...form,
         genre: form.genre.split(',').map(g => g.trim()),
         cast: form.cast ? form.cast.split(',').map(c => c.trim()) : [],
@@ -137,11 +130,10 @@ function AdminPanel() {
     }
   }
 
-  // ── DELETE MOVIE ──
   const handleDelete = async (movieId, title) => {
     if (!window.confirm(`"${title}" delete karaycha ahe ka?`)) return
     try {
-      await axios.delete(`${API}/api/upload/movie/${movieId}`, {
+      await API.delete(`/api/upload/movie/${movieId}`, {
         headers: { Authorization: `Bearer ${user.token}` }
       })
       setSuccess(`🗑️ "${title}" deleted!`)
@@ -163,7 +155,6 @@ function AdminPanel() {
     <div className="bg-gray-950 min-h-screen text-white p-8">
       <div className="max-w-4xl mx-auto">
 
-        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold text-red-500">👨‍💼 Admin Panel</h1>
           <button onClick={() => navigate('/')}
@@ -172,7 +163,6 @@ function AdminPanel() {
           </button>
         </div>
 
-        {/* Tabs */}
         <div className="flex gap-3 mb-6">
           <button onClick={() => { setTab('add'); cancelEdit() }}
             className={`px-6 py-2 rounded-full font-semibold text-sm transition-colors ${
@@ -188,11 +178,9 @@ function AdminPanel() {
           </button>
         </div>
 
-        {/* Alerts */}
         {success && <p className="bg-green-700 text-white px-4 py-3 rounded-lg mb-4">{success}</p>}
         {error   && <p className="bg-red-700 text-white px-4 py-3 rounded-lg mb-4">{error}</p>}
 
-        {/* ══ ADD / EDIT FORM ══ */}
         {tab === 'add' && (
           <div className="bg-gray-900 rounded-2xl p-6">
             <div className="flex items-center justify-between mb-6">
@@ -210,7 +198,6 @@ function AdminPanel() {
             <form onSubmit={editMovie ? handleUpdate : handleSubmit}
               className="grid grid-cols-2 gap-4">
 
-              {/* Title */}
               <div className="col-span-2">
                 <label className="text-gray-400 text-sm mb-1 block">Movie Title *</label>
                 <input name="title" value={form.title} onChange={handleChange} required
@@ -218,7 +205,6 @@ function AdminPanel() {
                   className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg outline-none focus:ring-2 focus:ring-red-500" />
               </div>
 
-              {/* Description */}
               <div className="col-span-2">
                 <label className="text-gray-400 text-sm mb-1 block">Description *</label>
                 <textarea name="description" value={form.description} onChange={handleChange} required
@@ -226,7 +212,6 @@ function AdminPanel() {
                   className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg outline-none focus:ring-2 focus:ring-red-500" />
               </div>
 
-              {/* Genre */}
               <div>
                 <label className="text-gray-400 text-sm mb-1 block">Genre * (comma separated)</label>
                 <input name="genre" value={form.genre} onChange={handleChange} required
@@ -234,7 +219,6 @@ function AdminPanel() {
                   className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg outline-none focus:ring-2 focus:ring-red-500" />
               </div>
 
-              {/* Language */}
               <div>
                 <label className="text-gray-400 text-sm mb-1 block">Language</label>
                 <select name="language" value={form.language} onChange={handleChange}
@@ -247,7 +231,6 @@ function AdminPanel() {
                 </select>
               </div>
 
-              {/* Year */}
               <div>
                 <label className="text-gray-400 text-sm mb-1 block">Release Year</label>
                 <input name="releaseYear" value={form.releaseYear} onChange={handleChange}
@@ -255,7 +238,6 @@ function AdminPanel() {
                   className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg outline-none focus:ring-2 focus:ring-red-500" />
               </div>
 
-              {/* Duration */}
               <div>
                 <label className="text-gray-400 text-sm mb-1 block">Duration</label>
                 <input name="duration" value={form.duration} onChange={handleChange}
@@ -263,7 +245,6 @@ function AdminPanel() {
                   className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg outline-none focus:ring-2 focus:ring-red-500" />
               </div>
 
-              {/* Director */}
               <div>
                 <label className="text-gray-400 text-sm mb-1 block">Director</label>
                 <input name="director" value={form.director} onChange={handleChange}
@@ -271,7 +252,6 @@ function AdminPanel() {
                   className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg outline-none focus:ring-2 focus:ring-red-500" />
               </div>
 
-              {/* Cast */}
               <div>
                 <label className="text-gray-400 text-sm mb-1 block">Cast (comma separated)</label>
                 <input name="cast" value={form.cast} onChange={handleChange}
@@ -279,7 +259,6 @@ function AdminPanel() {
                   className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg outline-none focus:ring-2 focus:ring-red-500" />
               </div>
 
-              {/* Poster */}
               <div className="col-span-2">
                 <label className="text-gray-400 text-sm mb-1 block">Poster Image URL</label>
                 <input name="posterUrl" value={form.posterUrl} onChange={handleChange}
@@ -287,7 +266,6 @@ function AdminPanel() {
                   className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg outline-none focus:ring-2 focus:ring-red-500" />
               </div>
 
-              {/* Trailer */}
               <div className="col-span-2">
                 <label className="text-gray-400 text-sm mb-1 block">YouTube Trailer URL</label>
                 <input name="trailerUrl" value={form.trailerUrl} onChange={handleChange}
@@ -295,7 +273,6 @@ function AdminPanel() {
                   className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg outline-none focus:ring-2 focus:ring-red-500" />
               </div>
 
-              {/* Download Links */}
               <div className="col-span-2">
                 <div className="border border-gray-700 rounded-xl p-4">
                   <h3 className="text-lg font-bold text-red-400 mb-4">📥 Download Links</h3>
@@ -325,7 +302,6 @@ function AdminPanel() {
                 </div>
               </div>
 
-              {/* Checkboxes */}
               <div className="flex gap-6 col-span-2">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input type="checkbox" name="isTrending"
@@ -341,13 +317,10 @@ function AdminPanel() {
                 </label>
               </div>
 
-              {/* Submit */}
               <div className="col-span-2">
                 <button type="submit" disabled={loading}
                   className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white py-3 rounded-lg font-semibold text-lg">
-                  {loading
-                    ? '⏳ Saving...'
-                    : editMovie ? '✅ Update Movie' : '🎬 Add Movie'}
+                  {loading ? '⏳ Saving...' : editMovie ? '✅ Update Movie' : '🎬 Add Movie'}
                 </button>
               </div>
 
@@ -355,7 +328,6 @@ function AdminPanel() {
           </div>
         )}
 
-        {/* ══ MANAGE MOVIES TAB ══ */}
         {tab === 'manage' && (
           <div className="bg-gray-900 rounded-2xl p-6">
             <h2 className="text-xl font-bold mb-6">🎬 All Movies ({movies.length})</h2>
@@ -368,7 +340,6 @@ function AdminPanel() {
                   <div key={movie._id}
                     className="bg-gray-800 rounded-xl p-4 flex items-center gap-4">
 
-                    {/* Poster */}
                     <div className="w-14 h-20 bg-gray-700 rounded-lg flex-shrink-0 overflow-hidden flex items-center justify-center">
                       {movie.posterUrl
                         ? <img src={movie.posterUrl} alt={movie.title}
@@ -377,7 +348,6 @@ function AdminPanel() {
                       }
                     </div>
 
-                    {/* Info */}
                     <div className="flex-1 min-w-0">
                       <h3 className="text-white font-semibold truncate">{movie.title}</h3>
                       <p className="text-gray-400 text-xs mt-1">
@@ -400,15 +370,12 @@ function AdminPanel() {
                       </div>
                     </div>
 
-                    {/* Buttons */}
                     <div className="flex gap-2 flex-shrink-0">
-                      <button
-                        onClick={() => handleEdit(movie)}
+                      <button onClick={() => handleEdit(movie)}
                         className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold">
                         ✏️ Edit
                       </button>
-                      <button
-                        onClick={() => handleDelete(movie._id, movie.title)}
+                      <button onClick={() => handleDelete(movie._id, movie.title)}
                         className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-semibold">
                         🗑️ Delete
                       </button>

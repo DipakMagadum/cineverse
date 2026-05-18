@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import API from '../api'
 
 function MovieGrid() {
   const [movies, setMovies] = useState([])
@@ -10,7 +10,7 @@ function MovieGrid() {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const { data } = await axios.get('http://localhost:5000/api/movies')
+        const { data } = await API.get('/api/movies')
         setMovies(data)
       } catch (err) {
         console.error('Error fetching movies:', err)
@@ -39,7 +39,6 @@ function MovieGrid() {
             <div key={movie._id}
               onClick={() => navigate(`/movie/${movie._id}`)}
               className="bg-gray-900 rounded-lg overflow-hidden hover:scale-105 transition-transform cursor-pointer">
-              {/* Poster */}
               <div className="bg-gray-800 h-48 flex items-center justify-center relative">
                 {movie.posterUrl ? (
                   <img src={movie.posterUrl} alt={movie.title} className="w-full h-full object-cover" />
@@ -50,7 +49,6 @@ function MovieGrid() {
                   HD
                 </span>
               </div>
-              {/* Info */}
               <div className="p-3">
                 <h3 className="text-white text-sm font-semibold truncate">{movie.title}</h3>
                 <p className="text-gray-400 text-xs mt-1">
