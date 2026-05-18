@@ -6,149 +6,73 @@ function Hero() {
   return (
     <div style={{
       position: 'relative',
-      minHeight: '88vh',
+      height: '100vh',
       display: 'flex',
       alignItems: 'center',
-      overflow: 'hidden',
       background: '#000',
+      overflow: 'hidden',
     }}>
-      {/* Animated Background */}
+      {/* Background gradient */}
       <div style={{
         position: 'absolute', inset: 0,
-        background: 'radial-gradient(ellipse at 20% 50%, rgba(255,60,60,0.15) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(255,140,0,0.1) 0%, transparent 50%), radial-gradient(ellipse at 50% 100%, rgba(120,0,255,0.08) 0%, transparent 50%)',
-      }}/>
-
-      <div style={{
-        position: 'absolute', inset: 0,
-        backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 100px, rgba(255,60,60,0.02) 100px, rgba(255,60,60,0.02) 101px)',
-        pointerEvents: 'none',
+        background: 'linear-gradient(to right, #000 40%, transparent 100%), linear-gradient(to top, #000 10%, transparent 60%), linear-gradient(135deg, #1a0000, #0d0d0d)',
       }}/>
 
       {/* Content */}
-      <div style={{ position: 'relative', zIndex: 2, padding: 'clamp(20px, 5vw, 80px)', maxWidth: '700px', width: '100%' }}>
-        
-        {/* Badge */}
+      <div style={{
+        position: 'relative', zIndex: 2,
+        padding: 'clamp(80px, 10vw, 120px) clamp(20px, 5vw, 60px) clamp(20px, 5vw, 60px)',
+        maxWidth: '600px',
+      }}>
         <div style={{
-          display: 'inline-flex', alignItems: 'center', gap: '8px',
-          background: 'rgba(255,60,60,0.15)',
-          border: '1px solid rgba(255,60,60,0.3)',
-          borderRadius: '50px',
-          padding: '6px 16px',
-          marginBottom: '28px',
-        }}>
-          <div style={{
-            width: '6px', height: '6px', borderRadius: '50%',
-            background: '#ff3c3c',
-            boxShadow: '0 0 8px #ff3c3c',
-            animation: 'pulse 1.5s infinite'
-          }}/>
-          <span style={{ color: '#ff6b6b', fontSize: '12px', fontWeight: '700', letterSpacing: '2px' }}>
-            NOW STREAMING
-          </span>
-        </div>
+          fontSize: '11px', fontWeight: '700',
+          color: '#e50914', letterSpacing: '3px',
+          marginBottom: '12px',
+        }}>TRENDING #1 IN INDIA</div>
 
-        {/* Title */}
         <h1 style={{
-          fontSize: 'clamp(2.5rem, 8vw, 5rem)',
-          fontWeight: '900',
-          lineHeight: '1.05',
-          letterSpacing: '-2px',
+          fontSize: 'clamp(2.5rem, 7vw, 4.5rem)',
+          fontWeight: '900', color: '#fff',
+          lineHeight: '1', letterSpacing: '-2px',
           fontFamily: 'Georgia, serif',
-          marginBottom: '8px',
-          background: 'linear-gradient(135deg, #ffffff 0%, #ffffff 50%, #ff8c00 100%)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-        }}>
-          CINEVERSE
-        </h1>
-
-        <div style={{
-          width: '60px', height: '3px',
-          background: 'linear-gradient(90deg, #ff3c3c, #ff8c00)',
-          borderRadius: '2px',
-          marginBottom: '24px',
-        }}/>
+          marginBottom: '16px',
+        }}>CINEVERSE</h1>
 
         <p style={{
-          color: '#888',
-          fontSize: 'clamp(0.9rem, 2vw, 1.1rem)',
-          lineHeight: '1.7',
-          marginBottom: '40px',
-          fontWeight: '400',
-          maxWidth: '480px',
+          color: '#999', fontSize: 'clamp(13px, 2vw, 16px)',
+          lineHeight: '1.6', marginBottom: '24px', maxWidth: '460px',
         }}>
-          Your ultimate destination for HD movies — Bollywood, Hollywood & South Indian. 
-          Download in seconds, watch anywhere.
+          Action • Thriller • Drama<br/>
+          Your ultimate destination for HD movies — Bollywood, Hollywood & South Indian. Download in seconds.
         </p>
 
-        {/* Buttons */}
-        <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           <button onClick={() => navigate('/movies')} style={{
-            background: 'linear-gradient(135deg, #ff3c3c, #ff8c00)',
-            color: 'white',
-            border: 'none',
-            padding: 'clamp(10px, 2vw, 14px) clamp(20px, 4vw, 32px)',
-            borderRadius: '50px',
-            fontSize: 'clamp(12px, 2vw, 14px)',
-            fontWeight: '700',
-            letterSpacing: '1px',
-            cursor: 'pointer',
-            boxShadow: '0 8px 32px rgba(255,60,60,0.35)',
-            transition: 'transform 0.2s, box-shadow 0.2s',
-          }}
-          onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(255,60,60,0.5)' }}
-          onMouseOut={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 32px rgba(255,60,60,0.35)' }}>
-            🎬 BROWSE MOVIES
-          </button>
+            background: '#fff', color: '#000',
+            border: 'none', padding: 'clamp(10px,2vw,12px) clamp(20px,4vw,28px)',
+            borderRadius: '4px', fontSize: 'clamp(13px,2vw,15px)',
+            fontWeight: '700', cursor: 'pointer',
+          }}>▶ Browse Movies</button>
 
           <button onClick={() => navigate('/movies')} style={{
-            background: 'transparent',
-            color: 'white',
-            border: '1px solid rgba(255,255,255,0.2)',
-            padding: 'clamp(10px, 2vw, 14px) clamp(20px, 4vw, 32px)',
-            borderRadius: '50px',
-            fontSize: 'clamp(12px, 2vw, 14px)',
-            fontWeight: '700',
-            letterSpacing: '1px',
-            cursor: 'pointer',
-            backdropFilter: 'blur(10px)',
-            transition: 'border-color 0.2s, background 0.2s',
-          }}
-          onMouseOver={e => { e.currentTarget.style.borderColor = 'rgba(255,60,60,0.5)'; e.currentTarget.style.background = 'rgba(255,60,60,0.08)' }}
-          onMouseOut={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; e.currentTarget.style.background = 'transparent' }}>
-            📥 LATEST DOWNLOADS
-          </button>
+            background: 'rgba(109,109,110,0.7)',
+            color: '#fff', border: 'none',
+            padding: 'clamp(10px,2vw,12px) clamp(20px,4vw,28px)',
+            borderRadius: '4px', fontSize: 'clamp(13px,2vw,15px)',
+            fontWeight: '700', cursor: 'pointer',
+          }}>ⓘ More Info</button>
         </div>
 
         {/* Stats */}
-        <div style={{ display: 'flex', gap: 'clamp(20px, 4vw, 40px)', marginTop: '56px', flexWrap: 'wrap' }}>
-          {[
-            { num: '1000+', label: 'Movies' },
-            { num: 'HD', label: 'Quality' },
-            { num: 'FREE', label: 'Downloads' },
-          ].map(stat => (
-            <div key={stat.label}>
-              <div style={{
-                fontSize: 'clamp(1.2rem, 3vw, 1.6rem)', fontWeight: '900',
-                background: 'linear-gradient(135deg, #fff, #ff8c00)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                fontFamily: 'Georgia, serif',
-              }}>{stat.num}</div>
-              <div style={{ color: '#555', fontSize: '12px', fontWeight: '600', letterSpacing: '1px', marginTop: '2px' }}>
-                {stat.label}
-              </div>
+        <div style={{ display: 'flex', gap: 'clamp(20px,4vw,40px)', marginTop: '48px', flexWrap: 'wrap' }}>
+          {[['1000+','Movies'], ['HD','Quality'], ['FREE','Downloads']].map(([num, label]) => (
+            <div key={label}>
+              <div style={{ fontSize: 'clamp(1.2rem,3vw,1.8rem)', fontWeight: '900', color: '#e50914', fontFamily: 'Georgia, serif' }}>{num}</div>
+              <div style={{ color: '#666', fontSize: '11px', fontWeight: '600', letterSpacing: '1px', marginTop: '2px' }}>{label}</div>
             </div>
           ))}
         </div>
       </div>
-
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.4; }
-        }
-      `}</style>
     </div>
   )
 }
