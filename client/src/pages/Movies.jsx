@@ -37,7 +37,7 @@ function Movies() {
     <div className="bg-gray-950 min-h-screen text-white">
       <Navbar />
       
-      <div className="px-8 py-6">
+      <div className="px-8 py-6" style={{ paddingTop: '88px' }}>
         <h1 className="text-3xl font-bold mb-6">🎬 All Movies</h1>
 
         <div className="flex items-center bg-gray-800 rounded-full px-4 py-3 w-full max-w-md mb-6">
