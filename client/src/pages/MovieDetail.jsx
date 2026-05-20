@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import API from '../api'
+import Navbar from '../components/Navbar'
 
 function MovieDetail() {
   const { id } = useParams()
@@ -8,7 +9,7 @@ function MovieDetail() {
   const [movie, setMovie] = useState(null)
   const [loading, setLoading] = useState(true)
   const [inWatchlist, setInWatchlist] = useState(false)
-  const [watchlistMsg, setWatchlistMsg] = useState('')
+  const [msg, setMsg] = useState('')
   const user = JSON.parse(localStorage.getItem('user'))
 
   useEffect(() => {
@@ -29,178 +30,113 @@ function MovieDetail() {
 
   const checkWatchlist = async () => {
     try {
-      const { data } = await API.get('/api/users/watchlist', {
-        headers: { Authorization: `Bearer ${user.token}` }
-      })
+      const { data } = await API.get('/api/users/watchlist', { headers: { Authorization: `Bearer ${user.token}` } })
       setInWatchlist(data.some(m => m._id === id))
-    } catch (err) {
-      console.error(err)
-    }
+    } catch (err) { console.error(err) }
   }
 
   const toggleWatchlist = async () => {
     if (!user) { navigate('/login'); return }
     try {
-      await API.post(`/api/users/watchlist/${id}`, {}, {
-        headers: { Authorization: `Bearer ${user.token}` }
-      })
+      await API.post(`/api/users/watchlist/${id}`, {}, { headers: { Authorization: `Bearer ${user.token}` } })
       setInWatchlist(!inWatchlist)
-      setWatchlistMsg(inWatchlist ? '❌ Watchlist madhe remove kele!' : '✅ Watchlist madhe add kele!')
-      setTimeout(() => setWatchlistMsg(''), 2500)
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
-  const handleDownload = async (quality) => {
-    if (!user) { navigate('/login'); return }
-    try {
-      const { data } = await API.get(
-        `/api/movies/${id}/download/${quality}`,
-        { headers: { Authorization: `Bearer ${user.token}` } }
-      )
-      window.open(data.url, '_blank')
-    } catch (err) {
-      alert('❌ Download link available nahi!')
-    }
+      setMsg(inWatchlist ? 'Removed from Watchlist' : 'Added to Watchlist!')
+      setTimeout(() => setMsg(''), 2000)
+    } catch (err) { console.error(err) }
   }
 
   if (loading) return (
-    <div className="bg-gray-950 min-h-screen flex items-center justify-center">
-      <p className="text-white text-xl">Loading...</p>
+    <div className="bg-[#0f0f0f] min-h-screen flex items-center justify-center">
+      <div className="text-gray-600 text-sm">Loading...</div>
     </div>
   )
 
   if (!movie) return (
-    <div className="bg-gray-950 min-h-screen flex items-center justify-center">
-      <p className="text-white">Movie not found!</p>
+    <div className="bg-[#0f0f0f] min-h-screen flex items-center justify-center">
+      <div className="text-gray-600 text-sm">Movie not found.</div>
     </div>
   )
 
   return (
-    <div className="bg-gray-950 min-h-screen text-white">
-      <div className="px-8 pt-6 flex items-center justify-between">
-        <button onClick={() => navigate(-1)}
-          className="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg text-sm">
-          ← Back
-        </button>
-        {watchlistMsg && (
-          <span className="bg-gray-800 text-white text-sm px-4 py-2 rounded-lg">
-            {watchlistMsg}
-          </span>
-        )}
-      </div>
+    <div className="bg-[#0f0f0f] min-h-screen text-white">
+      <Navbar />
+      <div className="px-6 md:px-10 pt-24 pb-12 max-w-6xl mx-auto">
 
-      <div className="max-w-5xl mx-auto px-8 py-6 flex flex-col md:flex-row gap-8">
-        <div className="w-full md:w-72 flex-shrink-0">
-          {movie.posterUrl ? (
-            <img src={movie.posterUrl} alt={movie.title}
-              className="w-full rounded-xl object-cover shadow-2xl" />
-          ) : (
-            <div className="bg-gray-800 h-96 rounded-xl flex items-center justify-center">
-              <span className="text-6xl">🎬</span>
-            </div>
-          )}
-          <button onClick={toggleWatchlist}
-            className={`w-full mt-3 py-3 rounded-xl font-semibold text-sm transition-colors ${
-              inWatchlist
-                ? 'bg-yellow-600 hover:bg-yellow-700 text-white'
-                : 'bg-gray-800 hover:bg-gray-700 text-white'
-            }`}>
-            {inWatchlist ? '🔖 Watchlist madhe ahe' : '+ Watchlist madhe add kara'}
-          </button>
-        </div>
+        {msg && <div className="bg-green-900/30 border border-green-800 text-green-400 text-sm px-4 py-3 rounded-lg mb-6">{msg}</div>}
 
-        <div className="flex-1">
-          <h1 className="text-4xl font-bold mb-2">{movie.title}</h1>
-
-          <div className="flex flex-wrap gap-2 mb-4">
-            {movie.genre?.map((g) => (
-              <span key={g} className="bg-gray-800 text-gray-300 px-3 py-1 rounded-full text-sm">
-                {g}
-              </span>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-2 gap-3 mb-4 text-sm">
-            <div className="bg-gray-900 rounded-lg p-3">
-              <p className="text-gray-400">Language</p>
-              <p className="font-semibold">{movie.language}</p>
-            </div>
-            <div className="bg-gray-900 rounded-lg p-3">
-              <p className="text-gray-400">Year</p>
-              <p className="font-semibold">{movie.releaseYear}</p>
-            </div>
-            <div className="bg-gray-900 rounded-lg p-3">
-              <p className="text-gray-400">Duration</p>
-              <p className="font-semibold">{movie.duration || 'N/A'}</p>
-            </div>
-            <div className="bg-gray-900 rounded-lg p-3">
-              <p className="text-gray-400">Rating</p>
-              <p className="font-semibold text-yellow-400">
-                ⭐ {movie.rating?.toFixed(1) || 'N/A'}
-              </p>
+        <div className="flex flex-col md:flex-row gap-8">
+          {/* Poster */}
+          <div className="flex-shrink-0 w-full md:w-56">
+            <div className="rounded-lg overflow-hidden bg-[#141414] border border-[#1f1f1f]" style={{ aspectRatio: '2/3' }}>
+              {movie.posterUrl
+                ? <img src={movie.posterUrl} alt={movie.title} className="w-full h-full object-cover" />
+                : <div className="w-full h-full flex items-center justify-center text-6xl">🎬</div>
+              }
             </div>
           </div>
 
-          {movie.director && (
-            <p className="text-gray-400 text-sm mb-2">
-              🎬 Director: <span className="text-white">{movie.director}</span>
-            </p>
-          )}
-          {movie.cast?.length > 0 && (
-            <p className="text-gray-400 text-sm mb-4">
-              🌟 Cast: <span className="text-white">{movie.cast.join(', ')}</span>
-            </p>
-          )}
+          {/* Info */}
+          <div className="flex-1">
+            <div className="flex flex-wrap items-center gap-2 mb-3">
+              <span className="bg-[#e50914] text-white text-xs font-bold px-2 py-0.5 rounded">HD</span>
+              {movie.isTrending && <span className="bg-orange-600 text-white text-xs font-bold px-2 py-0.5 rounded">🔥 Trending</span>}
+              {movie.genre?.map(g => <span key={g} className="bg-[#1f1f1f] text-gray-400 text-xs px-2 py-0.5 rounded border border-[#2a2a2a]">{g}</span>)}
+            </div>
 
-          <p className="text-gray-300 text-sm mb-6 leading-relaxed">
-            {movie.description}
-          </p>
+            <h1 className="text-3xl md:text-4xl font-black tracking-tight mb-2" style={{ fontFamily: 'Georgia, serif' }}>{movie.title}</h1>
 
-          {movie.trailerUrl && (
-            <a href={movie.trailerUrl} target="_blank" rel="noreferrer"
-              className="inline-block bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg text-sm mb-6">
-              ▶ Watch Trailer
-            </a>
-          )}
+            <div className="flex flex-wrap gap-4 text-xs text-gray-500 mb-4">
+              {movie.releaseYear && <span>{movie.releaseYear}</span>}
+              {movie.duration && <span>{movie.duration}</span>}
+              {movie.language && <span className="bg-[#1f1f1f] px-2 py-0.5 rounded border border-[#2a2a2a] text-gray-400">{movie.language}</span>}
+              {movie.director && <span>Dir: {movie.director}</span>}
+            </div>
 
-          <div className="bg-gray-900 rounded-xl p-5">
-            <h3 className="text-lg font-bold mb-1">📥 Download Movie</h3>
-            <p className="text-gray-400 text-xs mb-4">
-              Quality select kara — file direct download hoil!
-            </p>
+            <p className="text-gray-400 text-sm leading-relaxed mb-6 max-w-xl">{movie.description}</p>
 
-            {movie.downloadLinks?.length > 0 ? (
-              <div className="flex flex-wrap gap-3">
-                {movie.downloadLinks.map((link) => (
-                  <button key={link.quality}
-                    onClick={() => handleDownload(link.quality)}
-                    className="bg-red-600 hover:bg-red-700 px-5 py-3 rounded-lg font-semibold transition-colors">
-                    📥 {link.quality} — {link.size}
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-wrap gap-3">
-                {['480p', '720p', '1080p'].map((q) => (
-                  <button key={q}
-                    onClick={() => handleDownload(q)}
-                    className="bg-red-600 hover:bg-red-700 px-5 py-3 rounded-lg font-semibold">
-                    📥 {q}
-                  </button>
-                ))}
+            {movie.cast?.length > 0 && (
+              <div className="mb-6">
+                <p className="text-gray-600 text-xs font-semibold tracking-widest mb-2">CAST</p>
+                <div className="flex flex-wrap gap-2">
+                  {movie.cast.map(c => <span key={c} className="bg-[#141414] border border-[#2a2a2a] text-gray-400 text-xs px-3 py-1 rounded-full">{c}</span>)}
+                </div>
               </div>
             )}
 
-            {!user && (
-              <p className="text-yellow-400 text-sm mt-3">
-                ⚠️ Download saathi{' '}
-                <span onClick={() => navigate('/login')}
-                  className="underline cursor-pointer">
-                  login kara!
-                </span>
-              </p>
+            <div className="flex flex-wrap gap-3 mb-8">
+              <button onClick={toggleWatchlist}
+                className={`text-sm font-bold px-5 py-2.5 rounded border transition-colors ${inWatchlist ? 'bg-[#1f1f1f] border-[#333] text-gray-400 hover:border-red-800 hover:text-red-400' : 'bg-[#1f1f1f] border-[#333] text-white hover:border-[#e50914] hover:text-[#e50914]'}`}>
+                {inWatchlist ? '✓ In Watchlist' : '+ Watchlist'}
+              </button>
+              {movie.trailerUrl && (
+                <a href={movie.trailerUrl} target="_blank" rel="noreferrer"
+                  className="bg-white hover:bg-gray-200 text-black text-sm font-bold px-5 py-2.5 rounded transition-colors">
+                  ▶ Watch Trailer
+                </a>
+              )}
+            </div>
+
+            {/* Download Links */}
+            {movie.downloadLinks?.length > 0 && (
+              <div>
+                <p className="text-gray-600 text-xs font-semibold tracking-widest mb-3">DOWNLOAD</p>
+                <div className="flex flex-col gap-2">
+                  {movie.downloadLinks.map(link => (
+                    <a key={link.quality} href={user ? link.url : '/login'} target={user ? '_blank' : '_self'} rel="noreferrer"
+                      className="flex items-center justify-between bg-[#141414] border border-[#2a2a2a] hover:border-[#e50914] rounded-lg px-4 py-3 transition-colors group">
+                      <div className="flex items-center gap-3">
+                        <span className="bg-[#e50914] text-white text-xs font-bold px-2 py-0.5 rounded">{link.quality}</span>
+                        <span className="text-white text-sm font-semibold">{movie.title}</span>
+                        {link.size && <span className="text-gray-600 text-xs">{link.size}</span>}
+                      </div>
+                      <span className="text-gray-600 group-hover:text-[#e50914] text-sm font-bold transition-colors">↓ Download</span>
+                    </a>
+                  ))}
+                </div>
+                {!user && <p className="text-gray-600 text-xs mt-3">
+                  <span onClick={() => navigate('/login')} className="text-[#e50914] cursor-pointer hover:underline font-semibold">Sign in</span> to download movies
+                </p>}
+              </div>
             )}
           </div>
         </div>
