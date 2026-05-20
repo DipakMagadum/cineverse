@@ -1,3 +1,7 @@
+## Live Demo
+
+🔗 https://cineverse-six-beta.vercel.app
+
 # 🎬 CINEVERSE
 
 CINEVERSE is a full-stack movie website built using the MERN stack.  
