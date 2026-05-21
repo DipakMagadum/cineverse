@@ -1,49 +1,147 @@
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+
+const TMDB_KEY = '0c9a7ed50b0c5072517b8900d7e3dd31'
 
 function Hero() {
   const navigate = useNavigate()
+  const [posters, setPosters] = useState([])
+
+  useEffect(() => {
+    const fetchPosters = async () => {
+      try {
+        const res = await fetch(
+          `https://api.themoviedb.org/3/trending/movie/week?api_key=${TMDB_KEY}&language=en-US`
+        )
+        const data = await res.json()
+        const imgs = data.results
+          .filter(m => m.poster_path)
+          .slice(0, 14)
+          .map(m => `https://image.tmdb.org/t/p/w300${m.poster_path}`)
+        setPosters(imgs)
+      } catch (err) {
+        console.error(err)
+      }
+    }
+    fetchPosters()
+  }, [])
+
   return (
-    <div className="bg-[#0f0f0f] pt-16 border-b border-[#1a1a1a]">
-      <div className="flex flex-col md:flex-row items-center justify-between px-6 md:px-10 py-12 md:py-16 gap-10 max-w-7xl mx-auto">
-        
-        <div className="max-w-xl">
-          <div className="text-[#e50914] text-xs font-bold tracking-widest mb-3">TRENDING IN INDIA</div>
-          <h1 className="text-4xl md:text-5xl font-black text-white leading-tight tracking-tight mb-4" style={{ fontFamily: 'Georgia, serif' }}>
-            Watch & Download<br /><span className="text-[#e50914]">HD Movies</span> Free
-          </h1>
-          <p className="text-gray-500 text-sm leading-relaxed mb-6">
-            Bollywood • Hollywood • South Indian<br />
-            Latest releases in HD & 4K. No subscription needed.
-          </p>
-          <div className="flex gap-3 flex-wrap">
-            <button onClick={() => navigate('/movies')} className="bg-white hover:bg-gray-200 text-black font-bold text-sm px-6 py-3 rounded transition-colors">
-              ▶ Browse Movies
-            </button>
-            <button onClick={() => navigate('/movies')} className="bg-[#222] hover:bg-[#2a2a2a] text-white font-semibold text-sm px-6 py-3 rounded border border-[#333] transition-colors">
-              What's New
-            </button>
-          </div>
-          <div className="flex gap-10 mt-10">
-            {[['1200+', 'MOVIES'], ['HD', 'QUALITY'], ['FREE', 'ALWAYS']].map(([num, label]) => (
-              <div key={label}>
-                <div className="text-2xl font-black text-[#e50914]" style={{ fontFamily: 'Georgia, serif' }}>{num}</div>
-                <div className="text-gray-600 text-xs font-semibold tracking-widest mt-0.5">{label}</div>
-              </div>
-            ))}
-          </div>
+    <div style={{
+      position: 'relative', height: '100vh',
+      overflow: 'hidden', background: '#0a0a0a',
+    }}>
+      {/* Poster collage background */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        display: 'grid',
+        gridTemplateColumns: 'repeat(7, 1fr)',
+        gridTemplateRows: 'repeat(2, 1fr)',
+        gap: '3px',
+      }}>
+        {posters.map((src, i) => (
+          <div key={i} style={{
+            backgroundImage: `url(${src})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'brightness(0.55) saturate(1.2)',
+          }} />
+        ))}
+      </div>
+
+      {/* Overlays */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(90deg, rgba(0,0,0,0.97) 0%, rgba(0,0,0,0.85) 38%, rgba(0,0,0,0.4) 65%, rgba(0,0,0,0.1) 100%)',
+      }} />
+      <div style={{
+        position: 'absolute', bottom: 0, left: 0, right: 0, height: '50%',
+        background: 'linear-gradient(0deg, #0a0a0a 0%, transparent 100%)',
+      }} />
+      <div style={{
+        position: 'absolute', top: 0, left: 0, right: 0, height: '25%',
+        background: 'linear-gradient(180deg, rgba(0,0,0,0.7) 0%, transparent 100%)',
+      }} />
+
+      {/* Content */}
+      <div style={{
+        position: 'absolute', top: 0, left: 0, bottom: 0,
+        width: '55%', padding: 'clamp(80px,12vw,130px) clamp(20px,5vw,52px) 40px',
+        display: 'flex', flexDirection: 'column', justifyContent: 'center',
+        zIndex: 10,
+      }}>
+        {/* Badge */}
+        <div style={{
+          display: 'inline-flex', alignItems: 'center', gap: '6px',
+          background: 'rgba(229,9,20,0.15)',
+          border: '1px solid rgba(229,9,20,0.4)',
+          color: '#e50914', fontSize: '10px', fontWeight: '700',
+          letterSpacing: '2px', padding: '4px 10px',
+          borderRadius: '3px', marginBottom: '16px', width: 'fit-content',
+        }}>
+          <span style={{
+            width: '6px', height: '6px', background: '#e50914',
+            borderRadius: '50%', display: 'inline-block',
+          }} />
+          TRENDING IN INDIA
         </div>
 
-        <div className="flex gap-3 flex-shrink-0">
-          {[
-            { title: 'Kalki 2898', badge: '4K', bg: '#1a0808' },
-            { title: 'Fighter', badge: 'HD', bg: '#080818', mt: true },
-            { title: 'Pushpa 2', badge: 'HD', bg: '#080f08' },
-          ].map(({ title, badge, bg, mt }) => (
-            <div key={title} onClick={() => navigate('/movies')} className={`w-24 rounded-lg overflow-hidden cursor-pointer hover:scale-105 transition-transform flex flex-col justify-end ${mt ? 'mt-6' : ''}`} style={{ background: bg, aspectRatio: '2/3' }}>
-              <div className="p-2" style={{ background: 'linear-gradient(to top, #000, transparent)' }}>
-                <span className="text-xs bg-[#e50914] text-white px-1.5 py-0.5 rounded font-bold">{badge}</span>
-                <p className="text-white text-xs font-bold mt-1 truncate">{title}</p>
-              </div>
+        {/* Title */}
+        <h1 style={{
+          fontSize: 'clamp(2.4rem, 5vw, 3.8rem)',
+          fontWeight: '900', color: '#fff',
+          letterSpacing: '-2px', lineHeight: '1',
+          fontFamily: 'Georgia, serif', marginBottom: '10px',
+        }}>
+          CINE<span style={{ color: '#e50914' }}>VERSE</span>
+        </h1>
+
+        <p style={{
+          fontSize: '11px', color: '#777',
+          letterSpacing: '2px', fontWeight: '700',
+          marginBottom: '14px', textTransform: 'uppercase',
+        }}>
+          Bollywood &nbsp;•&nbsp; Hollywood &nbsp;•&nbsp; South
+        </p>
+
+        <p style={{
+          fontSize: '13px', color: '#888', lineHeight: '1.65',
+          maxWidth: '380px', marginBottom: '26px',
+        }}>
+          HD movies — free to stream and download. No subscription. No login required to browse.
+        </p>
+
+        {/* Buttons */}
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '32px' }}>
+          <button onClick={() => navigate('/movies')} style={{
+            background: '#e50914', color: '#fff', border: 'none',
+            padding: '11px 26px', borderRadius: '4px',
+            fontSize: '13px', fontWeight: '700', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', gap: '7px',
+          }}>▶ Browse Movies</button>
+
+          <button onClick={() => navigate('/movies')} style={{
+            background: 'rgba(255,255,255,0.1)', color: '#ddd',
+            border: '1px solid rgba(255,255,255,0.18)',
+            padding: '11px 26px', borderRadius: '4px',
+            fontSize: '13px', fontWeight: '600', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', gap: '7px',
+          }}>⬇ Top Downloads</button>
+        </div>
+
+        {/* Stats */}
+        <div style={{ display: 'flex', gap: '28px' }}>
+          {[['1000+','MOVIES'], ['HD','QUALITY'], ['FREE','DOWNLOADS']].map(([val, lbl]) => (
+            <div key={lbl}>
+              <div style={{
+                fontSize: 'clamp(1.3rem,3vw,1.7rem)',
+                fontWeight: '900', color: '#e50914',
+                fontFamily: 'Georgia, serif', lineHeight: '1',
+              }}>{val}</div>
+              <div style={{
+                fontSize: '10px', color: '#555',
+                letterSpacing: '1.5px', fontWeight: '700', marginTop: '3px',
+              }}>{lbl}</div>
             </div>
           ))}
         </div>
