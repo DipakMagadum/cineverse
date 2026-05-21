@@ -18,7 +18,8 @@ function Movies() {
   useEffect(() => {
     const q = searchParams.get('search')
     if (q) setSearch(q)
-  }, [])
+    else setSearch('')
+  }, [searchParams])
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -47,8 +48,16 @@ function Movies() {
         <h1 className="text-2xl font-black text-white mb-6">All <span className="text-[#e50914]">Movies</span></h1>
 
         <div className="flex items-center gap-2 bg-[#141414] border border-[#2a2a2a] rounded px-4 py-3 w-full max-w-sm mb-6">
-          <svg className="w-4 h-4 text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" /></svg>
-          <input type="text" placeholder="Search movies..." className="bg-transparent outline-none text-white text-sm w-full placeholder-gray-600" value={search} onChange={e => setSearch(e.target.value)} />
+          <svg className="w-4 h-4 text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search movies..."
+            className="bg-transparent outline-none text-white text-sm w-full placeholder-gray-600"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
         </div>
 
         <div className="mb-4">
@@ -80,13 +89,20 @@ function Movies() {
             {[...Array(12)].map((_, i) => (
               <div key={i} className="bg-[#141414] rounded-lg overflow-hidden animate-pulse">
                 <div className="bg-[#1f1f1f]" style={{ aspectRatio: '2/3' }} />
-                <div className="p-3"><div className="bg-[#1f1f1f] h-3 rounded mb-2" /><div className="bg-[#1f1f1f] h-2 rounded w-2/3" /></div>
+                <div className="p-3">
+                  <div className="bg-[#1f1f1f] h-3 rounded mb-2" />
+                  <div className="bg-[#1f1f1f] h-2 rounded w-2/3" />
+                </div>
               </div>
             ))}
           </div>
         ) : movies.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-gray-600 text-sm">No movies found!</p>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>🎬</div>
+            <p className="text-gray-400 text-base font-semibold mb-2">No movies found!</p>
+            <p className="text-gray-600 text-sm">
+              {search ? `"${search}" साठी कोणतीही movie सापडली नाही` : 'अजून movies add झाल्या नाहीत'}
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
