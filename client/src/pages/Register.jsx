@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import API from '../api'
+import Toast from '../components/Toast'
 
 const TMDB_KEY = '0c9a7ed50b0c5072517b8900d7e3dd31'
 
@@ -8,8 +9,8 @@ function Register() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
   const [posters, setPosters] = useState([])
+  const [toast, setToast] = useState(null)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -33,13 +34,13 @@ function Register() {
 
   const handleRegister = async (e) => {
     e.preventDefault()
-    setError('')
     try {
       const { data } = await API.post('/api/auth/register', { name, email, password })
       localStorage.setItem('user', JSON.stringify(data))
-      navigate('/')
+      setToast({ message: 'Account created! Welcome to CineVerse!', type: 'success' })
+      setTimeout(() => navigate('/'), 1500)
     } catch (err) {
-      setError('Registration failed! Try again.')
+      setToast({ message: 'Registration failed! Try again.', type: 'error' })
     }
   }
 
@@ -74,12 +75,6 @@ function Register() {
 
         {/* Card */}
         <div className="bg-[#141414]/80 backdrop-blur-md border border-white/10 rounded-xl p-8">
-
-          {error && (
-            <div className="bg-red-900/20 border border-red-800/50 text-red-400 text-sm px-4 py-3 rounded-lg mb-5">
-              {error}
-            </div>
-          )}
 
           <form onSubmit={handleRegister} className="flex flex-col gap-5">
             <div>
@@ -139,6 +134,15 @@ function Register() {
           </p>
         </div>
       </div>
+
+      {/* Toast */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   )
 }
